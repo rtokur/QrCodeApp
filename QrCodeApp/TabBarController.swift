@@ -68,25 +68,27 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         self.tabBar.backgroundImage = UIImage()
         self.tabBar.shadowImage = UIImage()
         
-        let addVC = AddVC()
-        addVC.tabBarItem = UITabBarItem(title: "Add",
+        let chooseVC = ChooseVC()
+        chooseVC.tabBarItem = UITabBarItem(title: "Add",
                                         image: UIImage(systemName: "plus"),
                                         tag: 0)
+        let cnvc = UINavigationController(rootViewController: chooseVC)
         
         let scanVC = ScanVC()
+        let snvc = UINavigationController(rootViewController: scanVC)
 
         let loginVC = LoginVC()
         loginVC.tabBarItem = UITabBarItem(title: "Login",
                                           image: UIImage(named: "circle-user"),
                                           tag: 1)
+        let lnvc = UINavigationController(rootViewController: loginVC)
         
-        self.viewControllers = [addVC, scanVC, loginVC]
+        self.viewControllers = [cnvc, snvc, lnvc]
     }
     
     //MARK: Actions
     @objc func menuButtonAction(sender: UIButton){
         self.selectedIndex = 1
-        titleLabel.textColor = UIColor(named: "DarkGreen3")
-        print("Menu")
+        self.titleLabel.textColor = UIColor(named: "DarkGreen3")
     }
 }
