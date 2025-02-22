@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow()
         let navController = UINavigationController()
         navController.popToRootViewController(animated: true)
-        window?.rootViewController = TabBarController()
+        window?.rootViewController = LaunchScreen()
         window?.makeKeyAndVisible()
         return true
     }

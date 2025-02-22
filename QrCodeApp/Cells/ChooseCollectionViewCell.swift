@@ -11,12 +11,6 @@ import SnapKit
 class ChooseCollectionViewCell: UICollectionViewCell {
     
     //MARK: UI Elements
-    let stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        return stack
-    }()
     
     let imageview: UIImageView = {
         let image = UIImageView()
@@ -24,18 +18,10 @@ class ChooseCollectionViewCell: UICollectionViewCell {
         return image
     }()
     
-    let label: UILabel = {
-        let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 17)
-        label.textColor = .black
-        label.textAlignment = .center
-        return label
-    }()
-    
     //MARK: Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .color
         setupViews()
         setupConstraints()
     }
@@ -46,23 +32,12 @@ class ChooseCollectionViewCell: UICollectionViewCell {
     
     //MARK: Setup Methods
     func setupViews(){
-        contentView.addSubview(stackView)
-        
-        stackView.addArrangedSubview(imageview)
-        
-        stackView.addArrangedSubview(label)
+        contentView.addSubview(imageview)
     }
     
     func setupConstraints(){
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         imageview.snp.makeConstraints { make in
-            make.height.equalTo(100)
-            make.width.equalToSuperview()
-        }
-        label.snp.makeConstraints { make in
-            make.width.equalToSuperview()
+            make.edges.equalToSuperview().inset(10)
         }
     }
     

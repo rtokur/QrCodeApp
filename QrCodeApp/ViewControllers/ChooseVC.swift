@@ -26,7 +26,7 @@ class ChooseVC: UIViewController {
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 120, height: 140)
+        layout.itemSize = CGSize(width: 80, height: 80)
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 10
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -36,30 +36,34 @@ class ChooseVC: UIViewController {
         return collection
     }()
     
+    private let view2: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 10
+        view.backgroundColor = .white
+        return view
+    }()
+    
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Social Media"
         label.font = .boldSystemFont(ofSize: 17)
         label.textColor = .black
-        label.backgroundColor = .white
-        label.layer.cornerRadius = 10
         label.clipsToBounds = true
         return label
     }()
     
     //MARK: Properties
     var images: [UIImage] = [UIImage(named: "facebook")!,UIImage(named: "youtube")!,UIImage(named: "whatsapp")!,UIImage(named: "twitter")!,UIImage(named: "instagram")!,UIImage(named: "spotify")!]
-    var labels: [String] = ["Facebook","YouTube","WhatsApp","X","Instagram","Spotify"]
-    
+    var names: [String] = ["facebook","youtube","whatsapp","twitter","instagram","spotify"]
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.title = "QR Code Scanner"
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor(named: "DarkGreen3"), .font: UIFont.boldSystemFont(ofSize: 25)]
-        navigationController?.navigationBar.backgroundColor = .white
-        navigationItem.largeTitleDisplayMode = .always
-        navigationController?.navigationBar.prefersLargeTitles = true
+        let title = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width - 32, height: view.frame.height))
+        title.text = "Welcome"
+        title.font = .boldSystemFont(ofSize: 25)
+        title.textColor = .white
+        navigationItem.titleView = title
+        navigationController?.navigationBar.backgroundColor = UIColor(named: "Color")
         setupViews()
         setupConstraints()
     }
@@ -70,7 +74,9 @@ class ChooseVC: UIViewController {
         
         scrollView.addSubview(stackView)
         
-        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(view2)
+        
+        view2.addSubview(label)
         
         collectionView.register(ChooseCollectionViewCell.self, forCellWithReuseIdentifier: "ChooseCollectionViewCell")
         collectionView.delegate = self
@@ -86,9 +92,13 @@ class ChooseVC: UIViewController {
             make.width.equalTo(scrollView.frameLayoutGuide)
             make.height.equalTo(scrollView.contentLayoutGuide)
         }
-        label.snp.makeConstraints { make in
+        view2.snp.makeConstraints { make in
             make.height.equalTo(30)
             make.width.equalToSuperview()
+        }
+        label.snp.makeConstraints { make in
+            make.left.equalTo(view2).inset(10)
+            make.height.equalToSuperview()
         }
         collectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
@@ -106,15 +116,16 @@ extension ChooseVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ChooseCollectionViewCell", for: indexPath) as! ChooseCollectionViewCell
         cell.imageview.image = images[indexPath.row]
-        cell.label.text = labels[indexPath.row]
         cell.layer.cornerRadius = 10
         cell.clipsToBounds = true
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let addVC = AddVC()
-        let nvc = UINavigationController(rootViewController: addVC)
+        let editVC = EditVC()
+        editVC.contentType = names[indexPath.row]
+        editVC.content = "Social Media"
+        let nvc = UINavigationController(rootViewController: editVC)
         nvc.modalPresentationStyle = .fullScreen
         nvc.isModalInPresentation = true
         present(nvc, animated: true)

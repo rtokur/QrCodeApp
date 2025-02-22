@@ -21,13 +21,8 @@ class AddVC: UIViewController {
         let stackview = UIStackView()
         stackview.axis = .vertical
         stackview.backgroundColor = .white
+        stackview.spacing = 20
         return stackview
-    }()
-    
-    private let stackView2: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        return stack
     }()
     
     private let imageView: UIImageView = {
@@ -37,21 +32,46 @@ class AddVC: UIViewController {
         return image
     }()
     
-    private let textField: UITextField = {
-        let text = UITextField()
-        text.placeholder = "Enter your website"
-        text.font = .boldSystemFont(ofSize: 25)
-        text.textColor = .black
-        text.attributedPlaceholder = NSAttributedString(string: "Enter your website", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-        text.addTarget(self, action: #selector(textFieldEditing(_:)), for: .editingChanged)
-        return text
+    private let vieww: UIView = {
+        let view = UIView()
+        return view
     }()
+    
+    private let shareBtn: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        button.tintColor = .color
+        button.backgroundColor = .clear
+        button.layer.borderColor = UIColor.color.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(ShareAction(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private let createNew: UIButton = {
+        let button = UIButton()
+        button.setTitle("Create New QR Code", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.backgroundColor = .color
+        button.addTarget(self, action: #selector(createNew(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    var controller: UIDocumentInteractionController?
+    
+    var url: String = ""
     
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        let backBtn = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissVC))
+        backBtn.tintColor = .white
+        navigationItem.leftBarButtonItem = backBtn
+        navigationController?.navigationBar.backgroundColor = .color
         // Do any additional setup after loading the view.
     }
     
@@ -60,19 +80,15 @@ class AddVC: UIViewController {
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+        view.backgroundColor = .white
         view.addSubview(scrollView)
-        
+        view.addSubview(vieww)
+        vieww.addSubview(shareBtn)
         scrollView.addSubview(stackView)
         
-        imageView.image = generateQRCode(from: "")
+        imageView.image = generateQRCode(from: url)
         stackView.addArrangedSubview(imageView)
-        stackView.addArrangedSubview(stackView2)
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.textField.frame
-            .height))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
-        stackView.addArrangedSubview(textField)
+        stackView.addArrangedSubview(createNew)
 
     }
     
@@ -87,11 +103,15 @@ class AddVC: UIViewController {
         imageView.snp.makeConstraints { make in
             make.height.equalTo(200)
         }
-        stackView2.snp.makeConstraints { make in
-            make.height.equalTo(100)
+        vieww.snp.makeConstraints { make in
+            make.top.trailing.equalTo(imageView).inset(5)
+            make.width.height.equalTo(40)
         }
-        textField.snp.makeConstraints { make in
-            make.height.equalTo(100)
+        shareBtn.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        createNew.snp.makeConstraints { make in
+            make.height.equalTo(60)
         }
     }
     
@@ -110,16 +130,35 @@ class AddVC: UIViewController {
     }
     
     //MARK: Actions
-    @objc func textFieldEditing(_ sender: UITextField) {
-        let text = sender.text!
-        guard text != "" else {
-            imageView.image = generateQRCode(from: "")
-            return
-        }
-        if let image = generateQRCode(from: text) {
-            imageView.image = image.withRenderingMode(.alwaysOriginal)
-        }
+    @objc func dismissVC(){
+        dismiss(animated: true)
     }
     
+    @objc func createNew(_ sender: UIButton){
+        let tbc = TabBarController()
+        tbc.isModalInPresentation = true
+        tbc.modalPresentationStyle = .fullScreen
+        present(tbc, animated: true)
+    }
+    
+    @objc func ShareAction(_ sender: UIButton) {
+        if let image = imageView.image {
+            if let imageData = image.jpegData(compressionQuality: 1.0) {
+                let tempFile = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Documents/whatsAppTmp.jpg")
+                
+                do {
+                    try imageData.write(to: tempFile, options: .atomic)
+                    
+                    controller = UIDocumentInteractionController(url: tempFile)
+                    controller?.uti = "public.jpeg"  // WhatsApp için doğru UTI
+                    controller?.presentOpenInMenu(from: sender.frame, in: self.view, animated: true)
+                    
+                } catch {
+                    print("Dosya yazılamadı: \(error)")
+                }
+            }
+        }
+    }
+
 }
 

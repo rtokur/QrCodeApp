@@ -12,7 +12,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     //MARK: UI Elements
     let scanBtn: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(named: "DarkGreen2")
+        button.backgroundColor = UIColor(named: "Color")
         button.setImage(UIImage(named: "qr-scan"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 30
@@ -32,7 +32,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "DarkGreen")
+        view.backgroundColor = .white
         self.delegate = self
         setupMiddleButton()
         setupTabBarItems()
@@ -63,7 +63,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         self.tabBar.backgroundColor = .white
         self.tabBar.barTintColor = .white
-        self.tabBar.tintColor = UIColor(named: "DarkGreen3")
+        self.tabBar.tintColor = UIColor(named: "Color")
         self.tabBar.unselectedItemTintColor = .lightGray
         self.tabBar.backgroundImage = UIImage()
         self.tabBar.shadowImage = UIImage()
@@ -89,6 +89,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     //MARK: Actions
     @objc func menuButtonAction(sender: UIButton){
         self.selectedIndex = 1
-        self.titleLabel.textColor = UIColor(named: "DarkGreen3")
+        self.titleLabel.tintColor = UIColor(named: "DarkGreen3")
+        self.scanBtn.backgroundColor = UIColor(named: "DarkGreen3")
     }
 }
