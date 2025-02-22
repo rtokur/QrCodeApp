@@ -13,7 +13,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     let scanBtn: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(named: "Color")
-        button.setImage(UIImage(named: "qr-scan"), for: .normal)
+        button.setImage(UIImage(named: "qr-scan"),
+                        for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 30
         button.layer.masksToBounds = true
@@ -25,9 +26,14 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         label.text = "Scan"
         label.textAlignment = .center
         label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 12,
+                                       weight: .medium)
         return label
     }()
+    
+    //MARK: Properties
+    var count: Int = 0
+    var userId: String = ""
     
     //MARK: Lifecycle
     override func viewDidLoad() {

@@ -1,8 +1,8 @@
 //
-//  ChooseCollectionViewCell.swift
+//  ChooseCollectionViewCell2.swift
 //  QrCodeApp
 //
-//  Created by Rumeysa Tokur on 21.02.2025.
+//  Created by Rumeysa Tokur on 22.02.2025.
 //
 
 import UIKit
@@ -11,11 +11,24 @@ import SnapKit
 class ChooseCollectionViewCell: UICollectionViewCell {
     
     //MARK: UI Elements
+    let stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.alignment = .center
+        return stack
+    }()
     
-    let imageview: UIImageView = {
+    let imageView: UIImageView = {
         let image = UIImageView()
         image.contentMode = .center
         return image
+    }()
+    
+    let label : UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .white
+        return label
     }()
     
     //MARK: Lifecycle
@@ -32,13 +45,22 @@ class ChooseCollectionViewCell: UICollectionViewCell {
     
     //MARK: Setup Methods
     func setupViews(){
-        contentView.addSubview(imageview)
+        contentView.addSubview(stackView)
+        
+        stackView.addArrangedSubview(imageView)
+        
+        stackView.addArrangedSubview(label)
     }
     
-    func setupConstraints(){
-        imageview.snp.makeConstraints { make in
+    func setupConstraints() {
+        stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)
         }
+        imageView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+        }
+        label.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+        }
     }
-    
 }

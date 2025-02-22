@@ -8,8 +8,12 @@
 import UIKit
 import SnapKit
 
-class ChooseVC: UIViewController {
-
+class ChooseVC: UIViewController, Increase {
+    //MARK: Methods
+    func increase() {
+        count += 1
+    }
+    
     //MARK: UI Elements
     let scrollView: UIScrollView = {
         let scroll = UIScrollView()
@@ -24,12 +28,26 @@ class ChooseVC: UIViewController {
         return stack
     }()
     
-    private let collectionView: UICollectionView = {
+    private let collectionView2: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 100, height: 100)
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 10
+        let collection = UICollectionView(frame: .zero,
+                                          collectionViewLayout: layout)
+        collection.backgroundColor = .clear
+        collection.showsHorizontalScrollIndicator = false
+        collection.isUserInteractionEnabled = true
+        return collection
+    }()
+    
+    private let socialCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 80, height: 80)
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 10
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collection = UICollectionView(frame: .zero,
+                                          collectionViewLayout: layout)
         collection.backgroundColor = .clear
         collection.showsHorizontalScrollIndicator = false
         collection.isUserInteractionEnabled = true
@@ -53,12 +71,38 @@ class ChooseVC: UIViewController {
     }()
     
     //MARK: Properties
-    var images: [UIImage] = [UIImage(named: "facebook")!,UIImage(named: "youtube")!,UIImage(named: "whatsapp")!,UIImage(named: "twitter")!,UIImage(named: "instagram")!,UIImage(named: "spotify")!]
-    var names: [String] = ["facebook","youtube","whatsapp","twitter","instagram","spotify"]
+    var images2: [UIImage] = [UIImage(named: "mail")!,
+                              UIImage(named: "message")!,
+                              UIImage(named: "phone")!,
+                              UIImage(named: "text")!,
+                              UIImage(named: "URL")!]
+    var labels: [String] = ["Mail",
+                            "Message",
+                            "Phone",
+                            "Text",
+                            "URL"]
+    
+    var images: [UIImage] = [UIImage(named: "facebook")!,
+                             UIImage(named: "youtube")!,
+                             UIImage(named: "whatsapp")!,
+                             UIImage(named: "twitter")!,
+                             UIImage(named: "instagram")!,
+                             UIImage(named: "spotify")!]
+    var names: [String] = ["facebook",
+                           "youtube",
+                           "whatsapp",
+                           "twitter",
+                           "instagram",
+                           "spotify"]
+    var count: Int = 0
+    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        let title = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width - 32, height: view.frame.height))
+        let title = UILabel(frame: CGRect(x: 0,
+                                          y: 0,
+                                          width: view.frame.width - 32,
+                                          height: view.frame.height))
         title.text = "Welcome"
         title.font = .boldSystemFont(ofSize: 25)
         title.textColor = .white
@@ -73,15 +117,21 @@ class ChooseVC: UIViewController {
         view.addSubview(scrollView)
         
         scrollView.addSubview(stackView)
+        collectionView2.register(ChooseCollectionViewCell.self,
+                                 forCellWithReuseIdentifier: "ChooseCollectionViewCell")
+        collectionView2.delegate = self
+        collectionView2.dataSource = self
+        stackView.addArrangedSubview(collectionView2)
         
         stackView.addArrangedSubview(view2)
         
         view2.addSubview(label)
         
-        collectionView.register(ChooseCollectionViewCell.self, forCellWithReuseIdentifier: "ChooseCollectionViewCell")
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        stackView.addArrangedSubview(collectionView)
+        socialCollectionView.register(SocialCollectionViewCell.self,
+                                      forCellWithReuseIdentifier: "ChooseCollectionViewCell")
+        socialCollectionView.delegate = self
+        socialCollectionView.dataSource = self
+        stackView.addArrangedSubview(socialCollectionView)
     }
     
     func setupConstraints(){
@@ -92,6 +142,10 @@ class ChooseVC: UIViewController {
             make.width.equalTo(scrollView.frameLayoutGuide)
             make.height.equalTo(scrollView.contentLayoutGuide)
         }
+        collectionView2.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalTo(250)
+        }
         view2.snp.makeConstraints { make in
             make.height.equalTo(30)
             make.width.equalToSuperview()
@@ -100,9 +154,9 @@ class ChooseVC: UIViewController {
             make.left.equalTo(view2).inset(10)
             make.height.equalToSuperview()
         }
-        collectionView.snp.makeConstraints { make in
+        socialCollectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(400)
+            make.height.equalTo(250)
         }
     }
 }
@@ -110,11 +164,25 @@ class ChooseVC: UIViewController {
 //MARK: Delegates
 extension ChooseVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == collectionView2 {
+            return images2.count
+        }
         return images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ChooseCollectionViewCell", for: indexPath) as! ChooseCollectionViewCell
+        if collectionView == collectionView2 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ChooseCollectionViewCell",
+                                                          for: indexPath) as! ChooseCollectionViewCell
+            cell.imageView.image = images2[indexPath.row]
+            cell.label.text = labels[indexPath.row]
+            cell.layer.cornerRadius = 10
+            cell.clipsToBounds = true
+            return cell
+        }
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ChooseCollectionViewCell",
+                                                      for: indexPath) as! SocialCollectionViewCell
         cell.imageview.image = images[indexPath.row]
         cell.layer.cornerRadius = 10
         cell.clipsToBounds = true
@@ -122,12 +190,45 @@ extension ChooseVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let editVC = EditVC()
-        editVC.contentType = names[indexPath.row]
-        editVC.content = "Social Media"
-        let nvc = UINavigationController(rootViewController: editVC)
-        nvc.modalPresentationStyle = .fullScreen
-        nvc.isModalInPresentation = true
-        present(nvc, animated: true)
+        while count <= 2 {
+            if collectionView == collectionView2 {
+                let editVC = EditVC()
+                editVC.contentType = labels[indexPath.row]
+                editVC.content = labels[indexPath.row]
+                editVC.delegate = self
+                let nvc = UINavigationController(rootViewController: editVC)
+                nvc.modalPresentationStyle = .fullScreen
+                nvc.isModalInPresentation = true
+                present(nvc, animated: true)
+                return
+            }else {
+                let editVC = EditVC()
+                editVC.contentType = names[indexPath.row]
+                editVC.content = "Social Media"
+                editVC.delegate = self
+                let nvc = UINavigationController(rootViewController: editVC)
+                nvc.modalPresentationStyle = .fullScreen
+                nvc.isModalInPresentation = true
+                present(nvc, animated: true)
+                return
+            }
+        }
+        let alert = UIAlertController(title: "Error",
+                                      message: "You have exceeded the maximum number of qr code creations. Please log in to continue.",
+                                      preferredStyle: .alert)
+        let action1 = UIAlertAction(title: "Cancel",
+                                    style: .cancel)
+        let action2 = UIAlertAction(title: "Login",
+                                    style: .default) { _ in
+            let login = LoginVC()
+            let nvc = UINavigationController(rootViewController: login)
+            nvc.modalPresentationStyle = .fullScreen
+            nvc.isModalInPresentation = true
+            self.present(nvc, animated: true)
+        }
+        alert.addAction(action1)
+        alert.addAction(action2)
+        present(alert, animated: true)
+        
     }
 }

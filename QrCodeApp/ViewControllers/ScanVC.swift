@@ -24,14 +24,16 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
     let view2: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "Color")!.withAlphaComponent(0.5)
+        view.backgroundColor = UIColor(named: "Color")!
+            .withAlphaComponent(0.5)
         return view
     }()
     
     let imageView: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
-        image.image = UIImage(named: "scan")?.withTintColor(.white)
+        image.image = UIImage(named: "scan")?
+            .withTintColor(.white)
         return image
     }()
     
@@ -43,9 +45,12 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
     private let swipCameraBtn: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "arrow.trianglehead.2.clockwise"), for: .normal)
+        button.setImage(UIImage(systemName: "arrow.trianglehead.2.clockwise"),
+                        for: .normal)
         button.tintColor = .color
-        button.addTarget(self, action: #selector(SwipCamera(_:)), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(SwipCamera(_:)),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -116,7 +121,9 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         session = AVCaptureSession()
         session?.sessionPreset = .high
         
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) else {
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera,
+                                                   for: .video,
+                                                   position: position) else {
             return
         }
         
@@ -133,7 +140,8 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
             })
             session?.addOutput(metadataOutput)
             
-            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+            metadataOutput.setMetadataObjectsDelegate(self,
+                                                      queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = [.qr]
             
             videoPreviewLayer?.removeFromSuperlayer()

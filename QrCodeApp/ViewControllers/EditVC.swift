@@ -6,6 +6,12 @@
 //
 
 import UIKit
+import SnapKit
+
+//MARK: Protocole
+protocol Increase: AnyObject {
+    func increase()
+}
 
 class EditVC: UIViewController {
 
@@ -38,7 +44,9 @@ class EditVC: UIViewController {
         text.clipsToBounds = true
         text.font = .boldSystemFont(ofSize: 14)
         text.textColor = .black
-        text.addTarget(self, action: #selector(CheckForChanges(_:)), for: .editingChanged)
+        text.addTarget(self,
+                       action: #selector(CheckForChanges(_:)),
+                       for: .editingChanged)
         return text
     }()
     
@@ -49,19 +57,27 @@ class EditVC: UIViewController {
         button.isEnabled = false
         button.backgroundColor = .color.withAlphaComponent(0.5)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(CreateQR(_:)), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(CreateQR(_:)),
+                         for: .touchUpInside)
         return button
     }()
     
+    //MARK: Properties
+    weak var delegate: Increase?
     var content: String = ""
     var contentType: String = ""
+    var count: Int = 0
     
     //MARK: Lifecyle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let back = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissAction(_:)))
+        let back = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
+                                   style: .done,
+                                   target: self,
+                                   action: #selector(dismissAction(_:)))
         back.tintColor = .white
         navigationItem.leftBarButtonItem = back
         navigationController?.navigationBar.backgroundColor = .color
@@ -78,14 +94,39 @@ class EditVC: UIViewController {
             label.text = content
             if content == "Social Media" {
                 nameLabel.text = "Your Username"
-                textField.attributedPlaceholder = NSAttributedString(string: "@username", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+                textField.attributedPlaceholder = NSAttributedString(string: "@username",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            }else if content == "Mail"{
+                nameLabel.text = "Email Address"
+                textField.attributedPlaceholder = NSAttributedString(string: "email@mail.com",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            }else if content == "Message" {
+                nameLabel.text = "Your Message"
+                textField.attributedPlaceholder = NSAttributedString(string: "Hello",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            }else if content == "Phone" {
+                nameLabel.text = "Phone Number"
+                textField.attributedPlaceholder = NSAttributedString(string: "+90 232 123 45 67",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            } else if content == "Text" {
+                nameLabel.text = "Your Text"
+                textField.attributedPlaceholder = NSAttributedString(string: "Hello",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            }else if content == "URL" {
+                nameLabel.text = "Your URL"
+                textField.attributedPlaceholder = NSAttributedString(string: "https://www.youtube.com",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
             }
+            
         }
         stackView.addArrangedSubview(label)
         
         stackView.addArrangedSubview(nameLabel)
         
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.textField.frame.height))
+        let paddingView = UIView(frame: CGRect(x: 0,
+                                               y: 0,
+                                               width: 10,
+                                               height: self.textField.frame.height))
         textField.leftViewMode = .always
         textField.leftView = paddingView
         stackView.addArrangedSubview(textField)
@@ -116,6 +157,7 @@ class EditVC: UIViewController {
         
     }
     
+    //MARK: Actions
     @objc func dismissAction(_ sender: UIBarButtonItem){
         dismiss(animated: true)
     }
@@ -132,7 +174,12 @@ class EditVC: UIViewController {
     
     @objc func CreateQR(_ sender: UIButton){
         let addVC = AddVC()
-        addVC.url = "https://www.\(contentType).com/\(textField.text)"
+        if content == "Social Media" {
+            addVC.url = "https://www.\(contentType).com/\(textField.text)"
+        } else {
+            addVC.url = textField.text!
+        }
+        delegate?.increase()
         let nvc = UINavigationController(rootViewController: addVC)
         nvc.isModalInPresentation = true
         nvc.modalPresentationStyle = .fullScreen

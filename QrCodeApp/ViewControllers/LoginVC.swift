@@ -6,13 +6,139 @@
 //
 
 import UIKit
+import SnapKit
+import FirebaseAuth
 
 class LoginVC: UIViewController {
 
+    //MARK: UI Elements
+    private let stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 15
+        stack.layer.borderColor = UIColor.color.cgColor
+        stack.layer.borderWidth = 2
+        stack.layer.cornerRadius = 10
+        return stack
+    }()
+    
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "LOGIN"
+        label.font = .boldSystemFont(ofSize: 30)
+        label.textColor = .color
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let emailText: UITextField = {
+        let text = UITextField()
+        text.leftViewMode = .always
+        text.borderStyle = .line
+        text.backgroundColor = .white
+        text.textColor = .black
+        return text
+    }()
+    
+    private let passwordText: UITextField = {
+        let text = UITextField()
+        text.leftViewMode = .always
+        text.borderStyle = .line
+        text.backgroundColor = .white
+        text.textColor = .black
+        return text
+    }()
+    
+    private let loginBtn: UIButton = {
+        let button = UIButton()
+        button.setTitle("LOGIN",
+                        for: .normal)
+        button.setTitleColor(.white,
+                             for: .normal)
+        button.backgroundColor = .color
+        button.layer.cornerRadius = 10
+        button.addTarget(self,
+                         action: #selector(LoginButtonAction(_:)),
+                         for: .touchUpInside)
+        return button
+    }()
+    
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupViews()
+        setupConstraints()
     }
+    
+    //MARK: Setup Methods
+    func setupViews(){
+        let tap = UITapGestureRecognizer(target: view,
+                                         action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        view.addSubview(stackView)
+        
+        stackView.addArrangedSubview(label)
+        let paddingView = UIView(frame: CGRect(x: 0,
+                                               y: 0,
+                                               width: 10,
+                                               height: self.emailText.frame.height))
+        emailText.leftView = paddingView
+        emailText.attributedPlaceholder = NSAttributedString(string: "Email",
+                                                             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+        stackView.addArrangedSubview(emailText)
+        let paddingView2 = UIView(frame: CGRect(x: 0,
+                                                y: 0,
+                                                width: 10,
+                                                height: self.passwordText.frame.height))
+        passwordText.leftView = paddingView2
+        passwordText.attributedPlaceholder = NSAttributedString(string: "Password",
+                                                                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+        stackView.addArrangedSubview(passwordText)
+        
+        stackView.addArrangedSubview(loginBtn)
 
+    }
+    
+    func setupConstraints(){
+        stackView.snp.makeConstraints { make in
+            make.trailing.leading.equalToSuperview().inset(40)
+            make.height.equalTo(275)
+            make.center.equalToSuperview()
+        }
+        label.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.top.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        emailText.snp.makeConstraints { make in
+            make.height.equalTo(40)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        passwordText.snp.makeConstraints { make in
+            make.height.equalTo(40)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        loginBtn.snp.makeConstraints { make in
+            make.height.equalTo(60)
+            make.bottom.equalToSuperview().inset(-20)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+    }
+    
+    @objc func LoginButtonAction(_ sender: UIButton){
+        Task {
+            guard let email = emailText.text,
+                    let password = passwordText.text else {
+                return
+            }
+            Auth.auth().signIn(withEmail: email, password: password)
+            let launch = LaunchScreen()
+            launch.isModalInPresentation = true
+            launch.modalPresentationStyle = .fullScreen
+            present(launch, animated: true)
+        }
+    }
+    
 }

@@ -39,13 +39,16 @@ class AddVC: UIViewController {
     
     private let shareBtn: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        button.setImage(UIImage(systemName: "square.and.arrow.up"),
+                        for: .normal)
         button.tintColor = .color
         button.backgroundColor = .clear
         button.layer.borderColor = UIColor.color.cgColor
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(ShareAction(_:)), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(ShareAction(_:)),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -55,12 +58,14 @@ class AddVC: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
         button.backgroundColor = .color
-        button.addTarget(self, action: #selector(createNew(_:)), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(createNew(_:)),
+                         for: .touchUpInside)
         return button
     }()
     
+    //MARK: Properties
     var controller: UIDocumentInteractionController?
-    
     var url: String = ""
     
     //MARK: Lifecycle
@@ -68,16 +73,19 @@ class AddVC: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        let backBtn = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissVC))
+        let backBtn = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
+                                      style: .done,
+                                      target: self,
+                                      action: #selector(dismissVC))
         backBtn.tintColor = .white
         navigationItem.leftBarButtonItem = backBtn
         navigationController?.navigationBar.backgroundColor = .color
-        // Do any additional setup after loading the view.
     }
     
     //MARK: Setup Methods
     func setupViews(){
-        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
+        let tap = UITapGestureRecognizer(target: view,
+                                         action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         view.backgroundColor = .white
@@ -115,8 +123,10 @@ class AddVC: UIViewController {
         }
     }
     
+    //MARK: Functions
     func generateQRCode(from string: String) -> UIImage? {
-        let data = string.data(using: String.Encoding.ascii, allowLossyConversion: false)
+        let data = string.data(using: String.Encoding.ascii,
+                               allowLossyConversion: false)
         
         if let filter = CIFilter(name: "CIQRCodeGenerator") {
             filter.setValue(data, forKey: "inputMessage")
@@ -150,8 +160,10 @@ class AddVC: UIViewController {
                     try imageData.write(to: tempFile, options: .atomic)
                     
                     controller = UIDocumentInteractionController(url: tempFile)
-                    controller?.uti = "public.jpeg"  // WhatsApp için doğru UTI
-                    controller?.presentOpenInMenu(from: sender.frame, in: self.view, animated: true)
+                    controller?.uti = "public.jpeg"
+                    controller?.presentOpenInMenu(from: sender.frame,
+                                                  in: self.view,
+                                                  animated: true)
                     
                 } catch {
                     print("Dosya yazılamadı: \(error)")

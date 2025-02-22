@@ -12,6 +12,7 @@ import FirebaseAuth
 
 class LaunchScreen : UIViewController {
     
+    //MARK: UI Elements
     let imageView: UIImageView = {
         let image = UIImageView(image: UIImage(named: "splash"))
         image.contentMode = .scaleAspectFill
@@ -25,6 +26,7 @@ class LaunchScreen : UIViewController {
         checkSession()
     }
     
+    //MARK: Functions
     func setup(){
         view.addSubview(imageView)
         imageView.snp.makeConstraints { make in
@@ -33,19 +35,24 @@ class LaunchScreen : UIViewController {
     }
     
     func checkSession(){
-        //        Task{
-        //            let userId = Auth.auth().currentUser?.uid
-        //            if userId != nil {
-        //
-        //            }else {
-
-        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-        let tbc = TabBarController()
-        
-        UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve) {
-            sceneDelegate.window?.rootViewController = tbc
-            sceneDelegate.window?.makeKeyAndVisible()
+        Task{
+            guard let sceneDelegate = UIApplication.shared
+                .connectedScenes
+                .first?
+                .delegate as? SceneDelegate else { return }
+            let tbc = TabBarController()
+            
+            let userId = Auth.auth().currentUser?.uid
+            if userId != nil {
+                tbc.userId = userId!
+            }
+            
+            UIView.transition(with: sceneDelegate.window!,
+                              duration: 0.5,
+                              options: .transitionCrossDissolve) {
+                sceneDelegate.window?.rootViewController = tbc
+                sceneDelegate.window?.makeKeyAndVisible()
+            }
         }
-        
     }
 }
