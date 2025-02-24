@@ -33,7 +33,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     //MARK: Properties
     var count: Int = 0
-    var userId: String = ""
+    var userId: String?
+    var userName: String?
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -84,12 +85,18 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         let snvc = UINavigationController(rootViewController: scanVC)
 
         let loginVC = LoginVC()
-        loginVC.tabBarItem = UITabBarItem(title: "Login",
-                                          image: UIImage(named: "circle-user"),
-                                          tag: 1)
+        if let userID = userId, let name = userName {
+            print(name,userID)
+            loginVC.tabBarItem = UITabBarItem(title: name, image: UIImage(systemName: "circle-user"), tag: 1)
+        }else {
+            loginVC.tabBarItem = UITabBarItem(title: "Login",
+                                              image: UIImage(named: "circle-user"),
+                                              tag: 1)
+        }
         let lnvc = UINavigationController(rootViewController: loginVC)
         
         self.viewControllers = [cnvc, snvc, lnvc]
+        
     }
     
     //MARK: Actions

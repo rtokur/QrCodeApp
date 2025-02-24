@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 import FirebaseAuth
+import FirebaseFirestore
 
 class LaunchScreen : UIViewController {
     
@@ -18,6 +19,9 @@ class LaunchScreen : UIViewController {
         image.contentMode = .scaleAspectFill
         return image
     }()
+    
+    //MARK: Properties
+    let db = Firestore.firestore()
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -43,8 +47,17 @@ class LaunchScreen : UIViewController {
             let tbc = TabBarController()
             
             let userId = Auth.auth().currentUser?.uid
+            
             if userId != nil {
+                
                 tbc.userId = userId!
+                let name = try await db.collection("Users").document(userId!).getDocument()
+                guard name.data()?.count != 0 else {
+                    return
+                }
+                if let name2 = name.data()?["name"] as? String {
+                    tbc.userName = name2
+                }
             }
             
             UIView.transition(with: sceneDelegate.window!,
