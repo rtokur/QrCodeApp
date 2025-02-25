@@ -33,8 +33,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     //MARK: Properties
     var count: Int = 0
-    var userId: String?
-    var userName: String?
+    var userId: String = ""
+    var userName: String = ""
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -42,6 +42,11 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         view.backgroundColor = .white
         self.delegate = self
         setupMiddleButton()
+        setupTabBarItems()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setupTabBarItems()
     }
     
@@ -67,42 +72,39 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     }
 
     func setupTabBarItems(){
-        
         self.tabBar.backgroundColor = .white
         self.tabBar.barTintColor = .white
         self.tabBar.tintColor = UIColor(named: "Color")
         self.tabBar.unselectedItemTintColor = .lightGray
         self.tabBar.backgroundImage = UIImage()
         self.tabBar.shadowImage = UIImage()
+        self.tabBar.layer.borderColor = UIColor.color.cgColor
+        self.tabBar.layer.borderWidth = 1
         
         let chooseVC = ChooseVC()
-        chooseVC.tabBarItem = UITabBarItem(title: "Add",
-                                        image: UIImage(systemName: "plus"),
-                                        tag: 0)
+        chooseVC.tabBarItem = UITabBarItem(title: "Add", image: UIImage(systemName: "plus"), tag: 0)
         let cnvc = UINavigationController(rootViewController: chooseVC)
         
         let scanVC = ScanVC()
         let snvc = UINavigationController(rootViewController: scanVC)
 
-        let loginVC = LoginVC()
-        if let userID = userId, let name = userName {
-            print(name,userID)
-            loginVC.tabBarItem = UITabBarItem(title: name, image: UIImage(systemName: "circle-user"), tag: 1)
-        }else {
-            loginVC.tabBarItem = UITabBarItem(title: "Login",
-                                              image: UIImage(named: "circle-user"),
-                                              tag: 1)
+        if !userId.isEmpty && !userName.isEmpty {
+            let profileVC = ProfileVC()
+            profileVC.tabBarItem = UITabBarItem(title: userName, image: UIImage(systemName: "person"), tag: 2)
+            profileVC.userName = userName
+            let pnvc = UINavigationController(rootViewController: profileVC)
+            viewControllers = [cnvc, snvc, pnvc]
+        } else {
+            let loginVC = LoginVC()
+            loginVC.tabBarItem = UITabBarItem(title: "Login", image: UIImage(systemName: "person"), tag: 2)
+            let lnvc = UINavigationController(rootViewController: loginVC)
+            viewControllers = [cnvc, snvc, lnvc]
         }
-        let lnvc = UINavigationController(rootViewController: loginVC)
-        
-        self.viewControllers = [cnvc, snvc, lnvc]
         
     }
     
     //MARK: Actions
     @objc func menuButtonAction(sender: UIButton){
         self.selectedIndex = 1
-        self.titleLabel.tintColor = UIColor(named: "DarkGreen3")
-        self.scanBtn.backgroundColor = UIColor(named: "DarkGreen3")
     }
 }

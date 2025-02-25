@@ -30,6 +30,10 @@ class LaunchScreen : UIViewController {
         checkSession()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     //MARK: Functions
     func setup(){
         view.addSubview(imageView)
@@ -44,28 +48,39 @@ class LaunchScreen : UIViewController {
                 .connectedScenes
                 .first?
                 .delegate as? SceneDelegate else { return }
+            
             let tbc = TabBarController()
             
-            let userId = Auth.auth().currentUser?.uid
-            
-            if userId != nil {
-                
-                tbc.userId = userId!
-                let name = try await db.collection("Users").document(userId!).getDocument()
-                guard name.data()?.count != 0 else {
+            if let userId = Auth.auth().currentUser?.uid {
+                tbc.userId = userId
+                let name = try await db.collection("Users").document(userId).getDocument()
+                guard name.exists else {
                     return
                 }
+                
                 if let name2 = name.data()?["name"] as? String {
                     tbc.userName = name2
+                    
+                    DispatchQueue.main.async {
+                        UIView.transition(with: sceneDelegate.window!,
+                                          duration: 0.5,
+                                          options: .transitionCrossDissolve) {
+                            sceneDelegate.window?.rootViewController = tbc
+                            sceneDelegate.window?.makeKeyAndVisible()
+                        }
+                    }
                 }
-            }
-            
-            UIView.transition(with: sceneDelegate.window!,
-                              duration: 0.5,
-                              options: .transitionCrossDissolve) {
-                sceneDelegate.window?.rootViewController = tbc
-                sceneDelegate.window?.makeKeyAndVisible()
+            }else {
+                DispatchQueue.main.async {
+                    UIView.transition(with: sceneDelegate.window!,
+                                      duration: 0.5,
+                                      options: .transitionCrossDissolve) {
+                        sceneDelegate.window?.rootViewController = tbc
+                        sceneDelegate.window?.makeKeyAndVisible()
+                    }
+                }
             }
         }
     }
 }
+

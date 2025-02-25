@@ -18,6 +18,12 @@ class SignUpVC: UIViewController {
     let ref = Storage.storage().reference(withPath: "Profiles")
     
     //MARK: UI Elements
+    private let scrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.showsVerticalScrollIndicator = false
+        return scroll
+    }()
+    
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -43,6 +49,8 @@ class SignUpVC: UIViewController {
         text.borderStyle = .line
         text.backgroundColor = .white
         text.textColor = .black
+        text.autocapitalizationType = .none
+        text.keyboardType = .namePhonePad
         return text
     }()
     
@@ -52,6 +60,8 @@ class SignUpVC: UIViewController {
         text.borderStyle = .line
         text.backgroundColor = .white
         text.textColor = .black
+        text.autocapitalizationType = .none
+        text.keyboardType = .emailAddress
         return text
     }()
     
@@ -61,6 +71,8 @@ class SignUpVC: UIViewController {
         text.borderStyle = .line
         text.backgroundColor = .white
         text.textColor = .black
+        text.autocapitalizationType = .none
+        text.isSecureTextEntry = true
         return text
     }()
     
@@ -76,6 +88,12 @@ class SignUpVC: UIViewController {
                          action: #selector(SignUpButtonAction(_:)),
                          for: .touchUpInside)
         return button
+    }()
+    
+    private let vieww: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
     }()
     
     //MARK: Lifecycle
@@ -97,7 +115,10 @@ class SignUpVC: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         view.backgroundColor = .white
-        view.addSubview(stackView)
+        
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(stackView)
         
         stackView.addArrangedSubview(label)
         let paddingView3 = UIView(frame: CGRect(x: 0,
@@ -127,14 +148,18 @@ class SignUpVC: UIViewController {
         stackView.addArrangedSubview(passwordText)
         
         stackView.addArrangedSubview(signUpBtn)
+        
+        stackView.addArrangedSubview(vieww)
 
     }
     
     func setupConstraints(){
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(10)
+        }
         stackView.snp.makeConstraints { make in
-            make.trailing.leading.equalToSuperview().inset(40)
-            make.height.equalTo(310)
-            make.center.equalToSuperview()
+            make.height.equalTo(scrollView.contentLayoutGuide)
+            make.width.equalTo(scrollView.frameLayoutGuide)
         }
         label.snp.makeConstraints { make in
             make.height.equalTo(50)
@@ -156,6 +181,9 @@ class SignUpVC: UIViewController {
         signUpBtn.snp.makeConstraints { make in
             make.height.equalTo(60)
             make.leading.trailing.equalToSuperview().inset(20)
+        }
+        vieww.snp.makeConstraints { make in
+            make.height.equalTo(1)
         }
     }
     

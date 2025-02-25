@@ -175,7 +175,7 @@ class EditVC: UIViewController {
     @objc func CreateQR(_ sender: UIButton){
         let addVC = AddVC()
         if content == "Social Media" {
-            addVC.url = "https://www.\(contentType).com/\(textField.text)"
+            addVC.url = "https://www.\(contentType).com/\(textField.text!)"
         } else {
             addVC.url = textField.text!
         }

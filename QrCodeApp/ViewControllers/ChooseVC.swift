@@ -144,7 +144,7 @@ class ChooseVC: UIViewController, Increase {
         }
         collectionView2.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(250)
+            make.height.equalTo(230)
         }
         view2.snp.makeConstraints { make in
             make.height.equalTo(30)
@@ -156,7 +156,7 @@ class ChooseVC: UIViewController, Increase {
         }
         socialCollectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(250)
+            make.height.equalTo(230)
         }
     }
 }

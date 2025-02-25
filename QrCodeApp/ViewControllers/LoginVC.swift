@@ -12,6 +12,12 @@ import FirebaseAuth
 class LoginVC: UIViewController {
 
     //MARK: UI Elements
+    private let scrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.showsVerticalScrollIndicator = false
+        return scroll
+    }()
+    
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -37,6 +43,8 @@ class LoginVC: UIViewController {
         text.borderStyle = .line
         text.backgroundColor = .white
         text.textColor = .black
+        text.autocapitalizationType = .none
+        text.keyboardType = .emailAddress
         return text
     }()
     
@@ -46,6 +54,8 @@ class LoginVC: UIViewController {
         text.borderStyle = .line
         text.backgroundColor = .white
         text.textColor = .black
+        text.autocapitalizationType = .none
+        text.isSecureTextEntry = true
         return text
     }()
     
@@ -72,6 +82,13 @@ class LoginVC: UIViewController {
         button.addTarget(self, action: #selector(SignUpAction), for: .touchUpInside)
         return button
     }()
+    
+    private let vieww: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +103,9 @@ class LoginVC: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
-        view.addSubview(stackView)
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(stackView)
         
         stackView.addArrangedSubview(label)
         let paddingView = UIView(frame: CGRect(x: 0,
@@ -109,18 +128,21 @@ class LoginVC: UIViewController {
         stackView.addArrangedSubview(loginBtn)
         
         stackView.addArrangedSubview(registerBtn)
+        
+        stackView.addArrangedSubview(vieww)
 
     }
     
     func setupConstraints(){
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(10)
+        }
         stackView.snp.makeConstraints { make in
-            make.trailing.leading.equalToSuperview().inset(40)
-            make.height.equalTo(345)
-            make.center.equalToSuperview()
+            make.height.equalTo(scrollView.contentLayoutGuide)
+            make.width.equalTo(scrollView.frameLayoutGuide)
         }
         label.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.top.equalToSuperview().inset(20)
+            make.height.equalTo(70)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         emailText.snp.makeConstraints { make in
@@ -139,6 +161,9 @@ class LoginVC: UIViewController {
             make.height.equalTo(60)
             make.leading.trailing.equalToSuperview().inset(20)
         }
+        vieww.snp.makeConstraints { make in
+            make.height.equalTo(1)
+        }
     }
     
     //MARK: Actions
@@ -150,15 +175,17 @@ class LoginVC: UIViewController {
             }
             Auth.auth().signIn(withEmail: email, password: password) { result, error  in
                 guard error == nil else {
-                    print(error?.localizedDescription)
+                    let alert = UIAlertController(title: "ERROR", message: error?.localizedDescription, preferredStyle: .alert)
+                    let action = UIAlertAction(title: "OK", style: .cancel)
+                    alert.addAction(action)
+                    self.present(alert, animated: true)
                     return
                 }
-                
+                let launch = LaunchScreen()
+                launch.isModalInPresentation = true
+                launch.modalPresentationStyle = .fullScreen
+                self.present(launch, animated: true)
             }
-            let launch = LaunchScreen()
-            launch.isModalInPresentation = true
-            launch.modalPresentationStyle = .fullScreen
-            present(launch, animated: true)
         }
     }
     
