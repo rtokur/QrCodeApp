@@ -127,7 +127,9 @@ class SignUpVC: UIViewController {
                                                height: self.nameText.frame.height))
         nameText.leftView = paddingView3
         nameText.attributedPlaceholder = NSAttributedString(string: "Name",
-                                                             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+                                                             attributes: [NSAttributedString
+                                                                .Key
+                                                                .foregroundColor: UIColor.lightGray])
         stackView.addArrangedSubview(nameText)
         
         let paddingView = UIView(frame: CGRect(x: 0,
@@ -136,7 +138,9 @@ class SignUpVC: UIViewController {
                                                height: self.emailText.frame.height))
         emailText.leftView = paddingView
         emailText.attributedPlaceholder = NSAttributedString(string: "Email",
-                                                             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+                                                             attributes: [NSAttributedString
+                                                                .Key
+                                                                .foregroundColor: UIColor.lightGray])
         stackView.addArrangedSubview(emailText)
         let paddingView2 = UIView(frame: CGRect(x: 0,
                                                 y: 0,
@@ -144,7 +148,9 @@ class SignUpVC: UIViewController {
                                                 height: self.passwordText.frame.height))
         passwordText.leftView = paddingView2
         passwordText.attributedPlaceholder = NSAttributedString(string: "Password",
-                                                                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+                                                                attributes: [NSAttributedString
+                                                                    .Key
+                                                                    .foregroundColor: UIColor.lightGray])
         stackView.addArrangedSubview(passwordText)
         
         stackView.addArrangedSubview(signUpBtn)

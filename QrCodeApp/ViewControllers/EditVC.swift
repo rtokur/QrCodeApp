@@ -8,11 +8,6 @@
 import UIKit
 import SnapKit
 
-//MARK: Protocole
-protocol Increase: AnyObject {
-    func increase()
-}
-
 class EditVC: UIViewController {
 
     //MARK: UI Elements
@@ -47,6 +42,7 @@ class EditVC: UIViewController {
         text.addTarget(self,
                        action: #selector(CheckForChanges(_:)),
                        for: .editingChanged)
+        text.autocapitalizationType = .none
         return text
     }()
     
@@ -64,10 +60,9 @@ class EditVC: UIViewController {
     }()
     
     //MARK: Properties
-    weak var delegate: Increase?
     var content: String = ""
     var contentType: String = ""
-    var count: Int = 0
+    var userId: String = ""
     
     //MARK: Lifecyle
     override func viewDidLoad() {
@@ -93,8 +88,13 @@ class EditVC: UIViewController {
         if content != ""{
             label.text = content
             if content == "Social Media" {
+                if contentType == "whatsapp"{
+                    nameLabel.text = "Your Phone"
+                    textField.attributedPlaceholder = NSAttributedString(string: "+90 232 123 45 67",
+                                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+                }
                 nameLabel.text = "Your Username"
-                textField.attributedPlaceholder = NSAttributedString(string: "@username",
+                textField.attributedPlaceholder = NSAttributedString(string: "username",
                                                                      attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
             }else if content == "Mail"{
                 nameLabel.text = "Email Address"
@@ -173,13 +173,54 @@ class EditVC: UIViewController {
     }
     
     @objc func CreateQR(_ sender: UIButton){
+        if userId == "" {
+
+            let key = "qrCount"
+            let maxLimit = 2
+            let currentCount = UserDefaults.standard.integer(forKey: key)
+            guard currentCount <= maxLimit else {
+                let alert = UIAlertController(title: "Error",
+                                              message: "You have exceeded the maximum number of qr code creations. Please log in to continue.",
+                                              preferredStyle: .alert)
+                let action1 = UIAlertAction(title: "Cancel",
+                                            style: .cancel)
+                let action2 = UIAlertAction(title: "Login",
+                                            style: .default) { _ in
+                    let tbc = TabBarController()
+                    tbc.modalPresentationStyle = .fullScreen
+                    tbc.isModalInPresentation = true
+                    tbc.selectedIndex = 2
+                    self.present(tbc, animated: true)
+                }
+                alert.addAction(action1)
+                alert.addAction(action2)
+                present(alert, animated: true)
+                return
+            }
+            UserDefaults.standard.set(currentCount + 1, forKey: key)
+
+        }
         let addVC = AddVC()
         if content == "Social Media" {
-            addVC.url = "https://www.\(contentType).com/\(textField.text!)"
+            switch contentType {
+            case "spotify":
+                addVC.url = "https://open.spotify.com/user/\(textField.text!)"
+            case "facebook":
+                addVC.url = "https://www.facebook.com/\(textField.text!)"
+            case "youtube":
+                addVC.url = "https://www.youtube.com/user/\(textField.text!)"
+            case "whatsapp":
+                addVC.url = "https://wa.me/\(textField.text!)"
+            case "twitter":
+                addVC.url = "https://twitter.com/\(textField.text!)"
+            case "instagram":
+                addVC.url = "https://www.instagram.com/\(textField.text!)"
+            default:
+                print("Error")
+            }
         } else {
             addVC.url = textField.text!
         }
-        delegate?.increase()
         let nvc = UINavigationController(rootViewController: addVC)
         nvc.isModalInPresentation = true
         nvc.modalPresentationStyle = .fullScreen

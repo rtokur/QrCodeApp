@@ -186,6 +186,7 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         view2.layer.mask = maskLayer
     }
     
+    //MARK: Actions
     @objc func SwipCamera(_ sender: UIButton){
         if cameraPosition == .back {
             cameraPosition = .front

@@ -8,11 +8,7 @@
 import UIKit
 import SnapKit
 
-class ChooseVC: UIViewController, Increase {
-    //MARK: Methods
-    func increase() {
-        count += 1
-    }
+class ChooseVC: UIViewController {
     
     //MARK: UI Elements
     let scrollView: UIScrollView = {
@@ -94,7 +90,7 @@ class ChooseVC: UIViewController, Increase {
                            "twitter",
                            "instagram",
                            "spotify"]
-    var count: Int = 0
+    var userId: String = ""
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -128,7 +124,7 @@ class ChooseVC: UIViewController, Increase {
         view2.addSubview(label)
         
         socialCollectionView.register(SocialCollectionViewCell.self,
-                                      forCellWithReuseIdentifier: "ChooseCollectionViewCell")
+                                      forCellWithReuseIdentifier: "SocialCollectionViewCell")
         socialCollectionView.delegate = self
         socialCollectionView.dataSource = self
         stackView.addArrangedSubview(socialCollectionView)
@@ -181,7 +177,7 @@ extension ChooseVC: UICollectionViewDelegate, UICollectionViewDataSource {
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ChooseCollectionViewCell",
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SocialCollectionViewCell",
                                                       for: indexPath) as! SocialCollectionViewCell
         cell.imageview.image = images[indexPath.row]
         cell.layer.cornerRadius = 10
@@ -190,45 +186,27 @@ extension ChooseVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        while count <= 2 {
-            if collectionView == collectionView2 {
-                let editVC = EditVC()
-                editVC.contentType = labels[indexPath.row]
-                editVC.content = labels[indexPath.row]
-                editVC.delegate = self
-                let nvc = UINavigationController(rootViewController: editVC)
-                nvc.modalPresentationStyle = .fullScreen
-                nvc.isModalInPresentation = true
-                present(nvc, animated: true)
-                return
-            }else {
-                let editVC = EditVC()
-                editVC.contentType = names[indexPath.row]
-                editVC.content = "Social Media"
-                editVC.delegate = self
-                let nvc = UINavigationController(rootViewController: editVC)
-                nvc.modalPresentationStyle = .fullScreen
-                nvc.isModalInPresentation = true
-                present(nvc, animated: true)
-                return
-            }
-        }
-        let alert = UIAlertController(title: "Error",
-                                      message: "You have exceeded the maximum number of qr code creations. Please log in to continue.",
-                                      preferredStyle: .alert)
-        let action1 = UIAlertAction(title: "Cancel",
-                                    style: .cancel)
-        let action2 = UIAlertAction(title: "Login",
-                                    style: .default) { _ in
-            let login = LoginVC()
-            let nvc = UINavigationController(rootViewController: login)
+        if collectionView == collectionView2 {
+            let editVC = EditVC()
+            editVC.contentType = labels[indexPath.row]
+            editVC.content = labels[indexPath.row]
+            editVC.userId = userId
+            let nvc = UINavigationController(rootViewController: editVC)
             nvc.modalPresentationStyle = .fullScreen
             nvc.isModalInPresentation = true
-            self.present(nvc, animated: true)
+            present(nvc, animated: true)
+            return
+        }else {
+            let editVC = EditVC()
+            editVC.contentType = names[indexPath.row]
+            editVC.content = "Social Media"
+            editVC.userId = userId
+            let nvc = UINavigationController(rootViewController: editVC)
+            nvc.modalPresentationStyle = .fullScreen
+            nvc.isModalInPresentation = true
+            present(nvc, animated: true)
+            return
         }
-        alert.addAction(action1)
-        alert.addAction(action2)
-        present(alert, animated: true)
         
     }
 }

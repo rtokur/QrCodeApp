@@ -51,7 +51,6 @@ class ProfileVC: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        // Do any additional setup after loading the view.
     }
     
     //MARK: Setup Methods

@@ -82,6 +82,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         self.tabBar.layer.borderWidth = 1
         
         let chooseVC = ChooseVC()
+        chooseVC.userId = userId
         chooseVC.tabBarItem = UITabBarItem(title: "Add", image: UIImage(systemName: "plus"), tag: 0)
         let cnvc = UINavigationController(rootViewController: chooseVC)
         
@@ -100,7 +101,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             let lnvc = UINavigationController(rootViewController: loginVC)
             viewControllers = [cnvc, snvc, lnvc]
         }
-        
     }
     
     //MARK: Actions
