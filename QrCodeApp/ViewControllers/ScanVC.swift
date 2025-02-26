@@ -68,11 +68,11 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         applyMaskView2()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        if session?.isRunning == false {
-            DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async {
+            if self.session?.isRunning == false {
                 self.session?.startRunning()
             }
         }
@@ -157,20 +157,21 @@ class ScanVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         session?.stopRunning()
-        
+
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             found(code: stringValue)
         }
-        dismiss(animated: true)
+        
     }
     
     func found(code: String) {
         let url = URL(string: code)!
         if UIApplication.shared.canOpenURL(url){
             UIApplication.shared.open(url, options: [:])
+            viewWillAppear(true)
         }
     }
     
